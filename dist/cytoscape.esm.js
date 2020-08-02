@@ -24,6 +24,8 @@ import util from 'lodash.debounce';
 import Heap from 'heap';
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -75,7 +77,7 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _arrayWithHoles(arr) {
@@ -83,6 +85,7 @@ function _arrayWithHoles(arr) {
 }
 
 function _iterableToArrayLimit(arr, i) {
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -108,8 +111,25 @@ function _iterableToArrayLimit(arr, i) {
   return _arr;
 }
 
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 var window$1 = typeof window === 'undefined' ? null : window; // eslint-disable-line no-undef
@@ -820,9 +840,7 @@ var zeroify = function zeroify() {
   return 0;
 };
 var noop = function noop() {};
-var error = function error(msg) {
-  throw new Error(msg);
-};
+var error = function error(msg) {};
 var warnings = function warnings(enabled) {
   if (enabled !== undefined) {
     warningsEnabled = !!enabled;
@@ -940,9 +958,7 @@ var setPrefixedProperty = function setPrefixedProperty(obj, propName, prefix, va
 };
 
 /* global Map */
-var ObjectMap =
-/*#__PURE__*/
-function () {
+var ObjectMap = /*#__PURE__*/function () {
   function ObjectMap() {
     _classCallCheck(this, ObjectMap);
 
@@ -986,9 +1002,7 @@ var Map$1 = typeof Map !== 'undefined' ? Map : ObjectMap;
 /* global Set */
 var undef =  "undefined" ;
 
-var ObjectSet =
-/*#__PURE__*/
-function () {
+var ObjectSet = /*#__PURE__*/function () {
   function ObjectSet(arrayOrObjectSet) {
     _classCallCheck(this, ObjectSet);
 
@@ -1070,7 +1084,6 @@ var Element = function Element(cy, params, restore) {
   restore = restore === undefined || restore ? true : false;
 
   if (cy === undefined || params === undefined || !core(cy)) {
-    error('An element must have a core reference and parameters set');
     return;
   }
 
@@ -1086,7 +1099,6 @@ var Element = function Element(cy, params, restore) {
 
 
   if (group !== 'nodes' && group !== 'edges') {
-    error('An element must be of type `nodes` or `edges`; you specified `' + group + '`');
     return;
   } // make the element array-like, just like a collection
 
@@ -1286,7 +1298,7 @@ var defineSearch = function defineSearch(params) {
       }
     }
 
-    var _loop2 = function _loop2() {
+    var _loop = function _loop() {
       var v = params.bfs ? Q.shift() : Q.pop();
       var vId = v.id();
 
@@ -1342,16 +1354,11 @@ var defineSearch = function defineSearch(params) {
       }
     };
 
-    _loop: while (Q.length !== 0) {
-      var _ret = _loop2();
+    while (Q.length !== 0) {
+      var _ret = _loop();
 
-      switch (_ret) {
-        case "continue":
-          continue;
-
-        case "break":
-          break _loop;
-      }
+      if (_ret === "continue") continue;
+      if (_ret === "break") break;
     }
 
     var connectedEles = cy.collection();
@@ -2072,9 +2079,7 @@ var sqrt2 = Math.sqrt(2); // Function which colapses 2 (meta) nodes into one
 // Receives as a paramater the edge which causes the collapse
 
 var collapse = function collapse(edgeIndex, nodeMap, remainingEdges) {
-  if (remainingEdges.length === 0) {
-    error("Karger-Stein must be run on a connected (sub)graph");
-  }
+  if (remainingEdges.length === 0) ;
 
   var edgeInfo = remainingEdges[edgeIndex];
   var sourceIn = edgeInfo[1];
@@ -2153,7 +2158,6 @@ var elesfn$6 = {
     var stopSize = Math.floor(numNodes / sqrt2);
 
     if (numNodes < 2) {
-      error('At least 2 nodes are required for Karger-Stein algorithm');
       return undefined;
     } // Now store edge destination as indexes
     // Format for each edge (edge index, source node index, target node index)
@@ -5108,19 +5112,11 @@ var setOptions$3 = function setOptions(options) {
   var dmp = options.damping;
   var pref = options.preference;
 
-  if (!(0.5 <= dmp && dmp < 1)) {
-    error("Damping must range on [0.5, 1).  Got: ".concat(dmp));
-  }
-
   var validPrefs = ['median', 'mean', 'min', 'max'];
 
   if (!(validPrefs.some(function (v) {
     return v === pref;
-  }) || number(pref))) {
-    error("Preference must be one of [".concat(validPrefs.map(function (p) {
-      return "'".concat(p, "'");
-    }).join(', '), "] or a number.  Got: ").concat(pref));
-  }
+  }) || number(pref))) ;
 
   return defaults$7(options);
 };
@@ -8226,8 +8222,6 @@ var Selector = function Selector(selector) {
     if (!this.parse(selector)) {
       this.invalid = true;
     }
-  } else {
-    error('A selector must be created from a string; found ');
   }
 };
 
@@ -12549,7 +12543,6 @@ var idFactory = {
 
 var Collection = function Collection(cy, elements, options) {
   if (cy === undefined || !core(cy)) {
-    error('A collection must have a reference to the core');
     return;
   }
 
@@ -12754,7 +12747,7 @@ elesfn$u.json = function (obj) {
         }
       } else {
         // parent is immutable via data()
-        var newParentValSpecd = 'parent' in obj.data;
+        var newParentValSpecd = ('parent' in obj.data);
         var parent = obj.data.parent;
 
         if (newParentValSpecd && (parent != null || _data2.parent != null) && parent != _data2.parent) {
@@ -12950,12 +12943,8 @@ elesfn$u.restore = function () {
         }
 
         if (val == null || val === '') {
-          // can't create if source or target is not defined properly
-          error('Can not create edge `' + id + '` with unspecified ' + field);
           badSourceOrTarget = true;
         } else if (!cy.hasElementWithId(val)) {
-          // can't create edge if one of its nodes doesn't exist
-          error('Can not create edge `' + id + '` with nonexistant ' + field + ' `' + val + '`');
           badSourceOrTarget = true;
         }
       }
@@ -14230,12 +14219,10 @@ var corefn$3 = {
     var cy = this;
 
     if (options == null) {
-      error('Layout options must be specified to make a layout');
       return;
     }
 
     if (options.name == null) {
-      error('A `name` must be specified to make a layout');
       return;
     }
 
@@ -14243,7 +14230,6 @@ var corefn$3 = {
     var Layout = cy.extension('layout', name);
 
     if (Layout == null) {
-      error('No such layout `' + name + '` found.  Did you forget to import it and `cytoscape.use()` it?');
       return;
     }
 
@@ -16254,7 +16240,8 @@ var styfn$6 = {};
       enums: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'ease-in-sine', 'ease-out-sine', 'ease-in-out-sine', 'ease-in-quad', 'ease-out-quad', 'ease-in-out-quad', 'ease-in-cubic', 'ease-out-cubic', 'ease-in-out-cubic', 'ease-in-quart', 'ease-out-quart', 'ease-in-out-quart', 'ease-in-quint', 'ease-out-quint', 'ease-in-out-quint', 'ease-in-expo', 'ease-out-expo', 'ease-in-out-expo', 'ease-in-circ', 'ease-out-circ', 'ease-in-out-circ']
     },
     gradientDirection: {
-      enums: ['to-bottom', 'to-top', 'to-left', 'to-right', 'to-bottom-right', 'to-bottom-left', 'to-top-right', 'to-top-left', 'to-right-bottom', 'to-left-bottom', 'to-right-top', 'to-left-top']
+      enums: ['to-bottom', 'to-top', 'to-left', 'to-right', 'to-bottom-right', 'to-bottom-left', 'to-top-right', 'to-top-left', 'to-right-bottom', 'to-left-bottom', 'to-right-top', 'to-left-top' // different order
+      ]
     },
     boundsExpansion: {
       number: true,
@@ -17632,7 +17619,6 @@ var Style = function Style(cy) {
   }
 
   if (!core(cy)) {
-    error('A style must have a core reference');
     return;
   }
 
@@ -20527,8 +20513,7 @@ var calculateGravityForces = function calculateGravityForces(layoutInfo, options
         var fy = options.gravity * dy / d;
         node.offsetX += fx;
         node.offsetY += fy; // s += ": Applied force: " + fx + ", " + fy;
-      } // s += ": skypped since it's too close to center";
-        // logDebug(s);
+      } // logDebug(s);
 
     }
   }
@@ -26669,10 +26654,6 @@ BRp$e.beforeRender = function (fn, priority) {
     return;
   }
 
-  if (priority == null) {
-    error('Priority is not optional for beforeRender');
-  }
-
   var cbs = this.beforeRenderCallbacks;
   cbs.push({
     fn: fn,
@@ -27016,9 +26997,7 @@ var defs = {
 
 // Uses keys so elements may share the same cache.
 
-var ElementTextureCacheLookup =
-/*#__PURE__*/
-function () {
+var ElementTextureCacheLookup = /*#__PURE__*/function () {
   function ElementTextureCacheLookup(getKey) {
     var doesEleInvalidateKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : falsify;
 
@@ -27035,9 +27014,6 @@ function () {
   _createClass(ElementTextureCacheLookup, [{
     key: "getIdsFor",
     value: function getIdsFor(key) {
-      if (key == null) {
-        error("Can not get id list for null key");
-      }
 
       var idsByKey = this.idsByKey;
       var ids = this.idsByKey.get(key);
@@ -31262,18 +31238,17 @@ function setExtension(type, name, registrant) {
   var ext = registrant;
 
   var overrideErr = function overrideErr(field) {
-    error('Can not register `' + name + '` for `' + type + '` since `' + field + '` already exists in the prototype and can not be overridden');
   };
 
   if (type === 'core') {
     if (Core.prototype[name]) {
-      return overrideErr(name);
+      return overrideErr();
     } else {
       Core.prototype[name] = registrant;
     }
   } else if (type === 'collection') {
     if (Collection.prototype[name]) {
-      return overrideErr(name);
+      return overrideErr();
     } else {
       Collection.prototype[name] = registrant;
     }
@@ -31421,7 +31396,7 @@ function setExtension(type, name, registrant) {
       var existsInR = rProto[pName] != null;
 
       if (existsInR) {
-        return overrideErr(pName);
+        return overrideErr();
       }
 
       proto[pName] = pVal; // take impl from base
@@ -31433,7 +31408,6 @@ function setExtension(type, name, registrant) {
 
     bProto.clientFunctions.forEach(function (name) {
       proto[name] = proto[name] || function () {
-        error('Renderer does not implement `renderer.' + name + '()` on its prototype');
       };
     });
     ext = Renderer;
@@ -31481,8 +31455,6 @@ var extension = function extension() {
       } // e.g. extension('renderer', 'svg', 'nodeShape', 'ellipse', { ... })
       else if (arguments.length === 5) {
           return setModule.apply(null, arguments);
-        } else {
-          error('Invalid extension access syntax');
         }
 }; // allows a core instance to access extensions internally
 
@@ -31584,7 +31556,7 @@ sheetfn.appendToStyle = function (style) {
   return style;
 };
 
-var version = "3.15.2";
+var version = "snapshot";
 
 var cytoscape = function cytoscape(options) {
   // if no options specified, use default
