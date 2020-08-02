@@ -30,7 +30,7 @@ export const zeroify = () => 0;
 export const noop = () => {};
 
 export const error = msg => {
-  throw new Error( msg );
+  
 };
 
 export const warnings = enabled => {
